@@ -1,0 +1,22 @@
+version: "3.7"
+services:
+  db:
+    image: postgres:14
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_PASSWORD: password
+  server:
+    build:
+      context: .
+    ports:
+      - "5001:5000"
+    depends_on:
+      - db
+    command: npm run start
+    environment:
+      APICLUSTER_SECRET: '{"username":"postgres","host":"db","dbname":"postgres","password":"password","port":"5432"}'
+volumes:
+  db-data:
