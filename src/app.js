@@ -7,6 +7,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.use("/api", todoRouter);
+app.get("/api/healthcheck", async (req, res) => {
+  res.json({ message: "OK!" });
+});
+app.use("/api/todos", todoRouter);
 
 module.exports = app;
