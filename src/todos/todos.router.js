@@ -1,46 +1,49 @@
-const { Router } = require("express");
-const { createTodo } = require("./todos.repository");
-
-const todoRouter = Router();
+const express = require("express");
+const router = express.Router();
+const todosRepo = require("./todos.repository");
 
 // Routes
 // Get all todos
-todoRouter.get("/todos", async (req, res) => {
+router.get("/", async (req, res) => {
   try {
-    console.log(req.body);
+    const allTodos = await todosRepo.getTodos();
+    return res.json(allTodos);
+    // res.json({ message: "hot reloading" });
   } catch (err) {
     console.error(err.message);
   }
 });
 
 // Get single todo
-todoRouter.get("/todos/:id", async (req, res) => {
+router.get("/:id", async (req, res) => {
   try {
-    console.log("Get single todo");
+    const { id } = req.params;
+    const todo = await todosRepo.getTodo(id);
+    return res.json(todo);
   } catch (err) {
     console.error(err.message);
   }
 });
 
 // Create todo
-todoRouter.post("/todos", async (req, res) => {
+router.post("/", async (req, res) => {
   try {
-    const { title, description, status } = req.body;
-    const newTodo = await createTodo({ title, description, status });
-    res.json(newTodo);
+    const { title, description } = req.body;
+    const newTodo = await todosRepo.createTodo({ title, description });
+    return res.status(201).json(newTodo);
   } catch (err) {
     console.error(err.message);
   }
 });
 
 // Update todo
-todoRouter.put("/todos/:id", (req, res) => {
+router.put("/:id", (req, res) => {
   res.send("Update todo");
 });
 
 // Delete todo
-todoRouter.delete("/todos/:id", (req, res) => {
+router.delete("/:id", (req, res) => {
   res.send("Delete todo");
 });
 
-module.exports = todoRouter;
+module.exports = router;
